@@ -1,3 +1,4 @@
+import codecs
 import os
 import re
 from markdown import markdown
@@ -23,7 +24,7 @@ def highlight(source, sections, preserve_paths=True, outdir=None):
     fragments = re.split(divider_html, output)
     for i, tp in enumerate(zip(sections, fragments)):
         section, fragment = tp
-        section["code_html"] = "<div class='highlight'><pre>{0}</pre></div>".format(fragment)
+        section["code_html"] = u"<div class='highlight'><pre>{0}</pre></div>".format(fragment)
         try:
             docs_text = unicode(section["doc"])
         except UnicodeError:
@@ -98,6 +99,8 @@ def process(sources, preserve_paths=True, outdir=None):
     for source in sources:
         dest = destination(source, preserve_paths=preserve_paths, outdir=outdir)
         ensure_directory(os.path.dirname(dest))
-        with open(destination(source, preserve_paths=preserve_paths, outdir=outdir), "w") as f:
+        with codecs.open(destination(source, preserve_paths=preserve_paths, outdir=outdir),
+                         mode="w",
+                         encoding="UTF-8") as f:
             f.write(generate_documentation(source, outdir=outdir))
             print "pycco = %s -> %s" % (source, dest)
